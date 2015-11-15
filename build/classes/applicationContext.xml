@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop" 
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+      http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<context:component-scan base-package="com.wunmest.service, com.wunmest.database.dao, com.wunmest.database.entity" />
+	
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+            <value>${jdbc_driverClassName}</value>
+        </property>
+        <property name="jdbcUrl">
+            <value>${jdbc_url}</value>
+        </property>
+        <property name="user">
+            <value>${jdbc_username}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc_password}</value>
+        </property>
+        <property name="minPoolSize">
+            <value>${ds_minPoolSize}</value>
+        </property>
+        <property name="maxPoolSize">
+            <value>${ds_maxPoolSize}</value>
+        </property>
+        <property name="initialPoolSize">
+            <value>${ds_initialPoolSize}</value>
+        </property>
+        <property name="maxIdleTime">
+            <value>60</value>
+        </property>
+        <property name="acquireIncrement">
+            <value>1</value>
+        </property>
+        <property name="idleConnectionTestPeriod">
+            <value>60</value>
+        </property>
+        <property name="preferredTestQuery" value="SELECT 1 FROM DUAL"></property>
+        <property name="testConnectionOnCheckin" value="true"></property>
+        <property name="testConnectionOnCheckout" value="false"></property>
+        <property name="acquireRetryAttempts">
+            <value>30</value>
+        </property>
+	</bean>
+	
+	
+    <!-- 
+    	MyBatis 自动参与 Spring 的事务管理, 无需额外配置.
+    	只需 SqlSessionFactoryBean 引用的数据源和 DataSourceTransactionManager 一致即可.
+     -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis-conf.xml" />
+        <property name="typeAliasesPackage" value="com.wunmest.database.entity" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:com/wunmest/database/map/*.xml</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.wunmest.database.dao" />
+    </bean>
+    
+	<bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!-- 
+    <tx:advice transaction-manager="transactionManager" id="basicAdvice">
+    	<tx:attributes>
+    		<tx:method name="*" isolation="DEFAULT" propagation="REQUIRED"/>
+    	</tx:attributes>
+    </tx:advice>
+    <aop:config>
+    	<aop:pointcut expression="execution(* com.wunmest.service.*.*(..))" id="basicPointCut"/>
+    	<aop:advisor advice-ref="basicAdvice" pointcut-ref="basicPointCut"/>
+    </aop:config>
+     -->
+    
+</beans>

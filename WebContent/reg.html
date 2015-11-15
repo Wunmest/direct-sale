@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>注册会员 - 银溪源, 民族尊严的捍卫者</title>
+<style>
+html, body, .container{
+	margin: 0;
+	padding: 0;
+}
+.content-container{
+	width: 500px;
+	margin: 0 auto;
+}
+.title{ 
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: -10px;
+}
+fieldset{
+	margin: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-radius: 4px;
+	border: dotted 1px gray;
+}
+legend{
+	letter-spacing: 2px;
+	color: gray;
+}
+label{
+	display: inline-block;
+	text-align: right;
+	width: 70px;
+}
+.button{
+	width: 60px;
+	height: 30px;
+	background-color: #4d90fe;
+	border-radius: 4px;
+	color: #fff;
+}
+.button:hover{
+	border: solid 1px rgba(0,0,0,0);
+	box-shadow: 0 0 0 2px #fff inset;
+	outline: 0 none rgba(0,0,0,0);
+}
+#submit{
+	display: block;
+	margin: 0 auto;
+}
+.ol-row{
+	margin: 6px;
+	font-size: 12px;
+}
+input{
+	border: 1px dotted #3079ed;
+	height: 18px;
+}
+.ol-row:after{
+	content:'*';
+	color: red;
+}
+.tip{
+	
+}
+.tip-normal{
+	font-size: 12px;
+	color: orange;
+}
+.tip-warn{
+	color: red;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<div class="content-container">
+		<fieldset lang="no">
+			<legend>登录信息</legend>
+			<div class="ol-row">
+				<label for="username" class="short-label">用户名: </label>
+				<input type="text" name="username" id="username">
+				<span class="tip tip-normal">字母、数字、下划线组成, 7~13位</span>
+			</div>
+			<div class="ol-row">
+				<label for="password" class="short-label">密码: </label>
+				<input type="password" name="password" id="password">
+				<span class="tip tip-normal">7~15位任意字符</span>
+			</div>
+		</fieldset>
+		
+		<fieldset>
+			<legend>会员信息</legend>
+			<div class="ol-row">
+				<label for="realname" class="middle-label">真实姓名: </label>
+				<input type="text" name="realname" id="realname">
+			</div>
+			<div class="ol-row">
+				<label for="male" class="middle-label">性别: </label>
+				<input type="radio" value="1" name="gender" id="male">男
+				<input type="radio" value="2" name="gender" id="female">女
+			</div>
+			<div class="ol-row">
+				<label for="tel" class="middle-label">手机号码: </label>
+				<input type="text" name="tel" id="tel">
+				<span class="tip tip-normal">11位</span>
+			</div>
+			<div class="ol-row">
+				<label for="uuid" class="middle-label">身份证号: </label>
+				<input type="text" name="uuid" id="uuid">
+				<span class="tip tip-normal">15位或18位</span>
+			</div>
+			<div class="ol-row">
+				<label for="ccn" class="middle-label">银行卡号: </label>
+				<input type="text" name="ccn" id="ccn">
+				<span class="tip tip-normal">16位或19位</span>
+			</div>
+			<div class="ol-row">
+				<label for="bank" class="middle-label">开户银行: </label>
+				<input type="text" name="bank" id="bank">
+				<span class="tip tip-normal">开户行名称</span>
+			</div>
+			<div class="ol-row">
+				<label for="referrerName" class="middle-label">推荐人姓名: </label>
+				<input type="text" name="referrerName" id="referrerName">
+				<span class="tip tip-normal">推荐人真实姓名</span>
+			</div>
+			<div class="ol-row" required="false">
+				<label for="referrerTel" class="middle-label">推荐人电话: </label>
+				<input type="text" name="referrerTel" id="referrerTel">
+				<span class="tip tip-normal">11位</span>
+			</div>
+		</fieldset>
+		
+		<input type="button" value="提交" id="submit" class="button">
+	</div>
+</div>
+</body>
+</html>
+<script src="//cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<script src="assets/js/service.js"></script>
+
+<script>
+var $container = $('.container');
+var $username = $('#username');
+var $password = $('#password');
+var $realname = $('#realname');
+var $gender = null;
+var $tel = $('#tel');
+var $uuid = $('#uuid');
+var $ccn = $('#ccn');
+var $bank = $('#bank');
+var $referrerName = $('#referrerName');
+var $referrerTel = $('#referrerTel');
+
+(function(){
+	$container.on('click', '#submit', submit);
+})();
+
+//用户名
+var usernameValidate = function(username){
+	//字母开头, 字母、数字、下划线组成, 7~13位
+	var reg = /^[a-zA-Z]\w{6,12}$/;
+	return reg.test(username) ? !0 : (flicker($username), !1);
+}
+//密码
+var passwordValidate = function(password){
+	var reg = /^.{7,15}$/;
+	return reg.test(password) ? !0 : (flicker($password), !1);
+}
+//真实姓名
+var realnameValidate = function(realname){
+	var reg = /^[\u4E00-\u9FA5\uF900-\uFA2D]{2,4}$/;
+	return reg.test(realname) ? !0 : (alert('请输入您的真实姓名'), !1);
+}
+//性别
+var genderValidate = function(gender){
+	return !!gender ? !0 : (alert('请选择性别'), !1);
+}
+//手机号码
+var telValidate = function($mobile){
+	var reg = /^1{1}\d{10}$/;
+	return reg.test($mobile.val()) ? !0 : (flicker($mobile), !1);
+}
+//身份证号
+var uuidValidate = function(uuid){
+	var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+	return reg.test(uuid) ? !0 : (flicker($uuid), !1);
+}
+//银行卡号
+var ccnValidate = function(ccn){
+	var reg = /(^\d{16}$)|(^\d{19}$)/;
+	return reg.test(ccn) ? !0 : (flicker($ccn), !1);
+}
+//开户银行
+var bankValidate = function(bank){
+	var reg = /^[\u4E00-\u9FA5\uF900-\uFA2D]{2,}$/;
+	return reg.test(bank) ? !0 : (flicker($bank), !1);
+}
+//推荐人
+var referrerNameValidate = function(referrerName){
+	var reg = /^[\u4E00-\u9FA5\uF900-\uFA2D]{2,4}$/;
+	return reg.test(referrerName) ? !0 : (flicker($referrerName), !1);
+}
+//文字闪烁效果
+var flicker = function($element){
+	var $tip = $element.next('.tip');
+	$tip.removeClass('tip-normal').addClass('tip-warn');
+	for(var i = 0; i < 5; i++)
+		$tip.fadeToggle(200);
+	$tip.fadeToggle(200, function(){
+		$tip.removeClass('tip-warn').addClass('tip-normal');
+	});
+};
+//提交前的检查
+var submitCheck = function(){
+	$gender = $('[name=gender]:checked');
+	var debug = usernameValidate($username.val()) && passwordValidate($password.val()) && 
+	realnameValidate($realname.val()) && genderValidate($gender.val()) && telValidate($tel) &&
+	uuidValidate($uuid.val()) && ccnValidate($ccn.val()) && bankValidate($bank.val()) &&
+	referrerNameValidate($referrerName.val()) && telValidate($referrerTel);
+	console.debug('数据检查：' + debug);
+	return debug;
+}
+//提交注册信息
+function submit(){
+	submitCheck() ? 
+		$.ajax({
+			url: service.user.reg,
+			method: 'post',
+			data: {
+					username: $username.val(), password: $password.val(), realname: $realname.val(), 
+					gender: $gender.val(), tel: $tel.val(), uuid: $uuid.val(), ccn: $ccn.val(), bank: $bank.val(),
+					referrerName: $referrerName.val(), referrerTel: $referrerTel.val()
+				},
+			beforeSend: function(){
+				
+			},
+			complete: function(){
+				
+			},
+			success: function(res){
+				console.log(res);
+			},
+			error: function(res){
+				alert('网页出错了, 请尝试刷新页面重试');
+			}
+		}) : !1;
+}
+</script>

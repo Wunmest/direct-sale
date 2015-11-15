@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wunmest.database.dao.UserDao">
+	<sql id="userColumns">
+		username, pwd, realname, gender, uuid, referrer, tel, create_time
+	</sql>
+	
+	<insert id="insert" parameterType="User" useGeneratedKeys="true" keyColumn="uid">
+		INSERT INTO d_user_msg
+		(<include refid="userColumns"></include>)
+		VALUES
+		(#{username}, MD5(#{password}), #{realname}, #{gender}, #{uuid}, #{referrer.uid}, #{tel}, now());
+		<selectKey resultType="long" keyProperty="uid">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<select id="select" resultType="User">
+		SELECT u.*, u.create_time regTime, r.uid 'referrer.uid', r.username 'referrer.username', r.realname 'referrer.realname'
+		FROM d_user_msg u,d_user_msg r
+		WHERE u.referrer = r.uid
+		AND u.is_valid IS TRUE;
+	</select>
+	
+	<select id="selectByRealname" parameterType="String" resultType="User">
+		SELECT uid, <include refid="userColumns"></include>
+		FROM d_user_msg
+		WHERE realname = #{realname}
+		AND is_valid IS TRUE;
+	</select>
+	
+	<select id="selectOriginUsers" resultType="User">
+		SELECT uid, <include refid="userColumns"></include>
+		FROM d_user_msg u, r_user_role_rela r
+		WHERE u.uid = r.uid
+		AND r.rid = 2
+		AND is_valid IS TRUE;
+	</select>
+	
+	<select id="selectByReferrer" parameterType="long" resultType="User">
+		SELECT *
+		FROM d_user_msg
+		WHERE referrer = #{uid}
+		AND is_valid IS TRUE;
+	</select>
+	
+	<select id="getReferrerRoleByUid" parameterType="long" resultType="Role">
+		SELECT s.rid, s.role_name roleName, s.description desc
+		FROM s_role_code s, d_user_msg u, r_user_role_rela r
+		WHERE u.referrer = r.uid
+		AND r.rid = s.rid
+		AND u.uid = #{uid};
+	</select>
+	
+	<insert id="insertUserRoles" parameterType="User">
+		INSERT INTO r_user_role_rela
+		VALUES
+		<foreach collection="roles" item="role" separator="," close=";">
+			(#{uid}, #{role.rid})
+		</foreach>
+	</insert>
+</mapper>

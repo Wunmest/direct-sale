@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wunmest.database.dao.RoleDao">
+	
+	<resultMap type="Role" id="role">
+		<result column="rid" property="rid"/>
+		<result column="role_name" property="roleName"/>
+		<result column="description" property="desc"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="Role">
+		INSERT INTO s_role_code (role_name, description)
+		VALUES (#{roleName}, #{desc});
+		<selectKey keyProperty="rid" resultType="int">
+			SELECT LAST_INSERT_ID();
+		</selectKey>
+	</insert>
+	
+	<select id="selectByUid" parameterType="long" resultType="Role">
+		SELECT s.rid, s.role_name roleName, s.description `desc`
+		FROM s_role_code s, d_user_msg u, r_user_role_rela r
+		WHERE u.uid = r.uid
+		AND r.rid = s.rid
+		AND u.uid = #{uid};
+	</select>
+	
+	<select id="selectByName" parameterType="String" resultMap="role">
+		SELECT *
+		FROM s_role_code
+		WHERE role_name = #{roleName};
+	</select>
+	
+</mapper>
