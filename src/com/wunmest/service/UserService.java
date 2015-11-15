@@ -44,19 +44,11 @@ public class UserService {
 		/* 推荐人是否满足条件 begin */
 		// 首先推荐人得存在
 		if(!isOrigin){
-			List<User> sameReferrerName = userDao.selectByRealname(user.getReferrer().getRealname());
-			if(sameReferrerName.isEmpty()){
+			User referrer = userDao.selectByTel(user.getReferrer().getTel());
+			if(referrer == null){
 				throw new XException(0, "推荐人不存在, 注册失败", null);
-			}else{
-				for(User temp : sameReferrerName){
-					if(temp.getTel() == user.getReferrer().getTel()) {
-						user.setReferrer(temp);
-						break;
-					}
-				}
-				if(user.getReferrer().getUid() == null)
-					throw new XException(0, "推荐人信息错误, 请核实", null);
 			}
+			user.setReferrer(referrer);
 		}
 		// 检查推荐人数是否已达上限
 		List<User> recommendedUsers = userDao.selectByReferrer(user.getReferrer().getUid());
@@ -102,13 +94,17 @@ public class UserService {
 				bankDao.insert(user.getUid(), ccn, bank) < 1)
 			throw new XException(0, "注册失败, 请稍后再试", null);
 		
-		
 		//注册完以后要检查上级推荐人
 		
 	}
 	
+	
+	
+	
+	
+	/*
 	public List<User> selectByRealname(String realname){
 		return userDao.selectByRealname(realname);
 	}
-	
+	*/
 }

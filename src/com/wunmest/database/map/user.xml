@@ -29,6 +29,13 @@
 		AND is_valid IS TRUE;
 	</select>
 	
+	<select id="selectByTel" parameterType="long" resultType="User">
+		SELECT uid, <include refid="userColumns"></include>
+		FROM d_user_msg
+		WHERE tel = #{tel}
+		AND is_valid IS TRUE;
+	</select>
+	
 	<select id="selectOriginUsers" resultType="User">
 		SELECT uid, <include refid="userColumns"></include>
 		FROM d_user_msg u, r_user_role_rela r

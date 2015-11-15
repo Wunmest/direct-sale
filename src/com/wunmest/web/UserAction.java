@@ -86,7 +86,7 @@ public class UserAction {
 		}
 		return xResponse;
 	}
-	
+	/*
 	//根据真实姓名查询推荐人个数
 	@RequestMapping("/referrer/{relaname}")
 	@ResponseBody
@@ -96,4 +96,5 @@ public class UserAction {
 		xResponse.setData(data);
 		return xResponse;
 	}
+	*/
 }
