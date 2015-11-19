@@ -22,7 +22,7 @@ import com.wunmest.database.entity.User;
 import com.wunmest.domain.XException;
 
 @Service
-@Transactional(isolation=Isolation.DEFAULT, propagation=Propagation.REQUIRED, rollbackFor={Exception.class})
+@Transactional(isolation=Isolation.READ_COMMITTED, propagation=Propagation.REQUIRED, rollbackFor={Exception.class})
 public class UserService {
 
 	@Resource
@@ -40,21 +40,27 @@ public class UserService {
 		Logger log = Logger.getLogger(UserService.class);
 		
 		boolean isOrigin = Long.valueOf(0) == user.getReferrer().getUid();
+		User referrer = null;
 		
 		/* 推荐人是否满足条件 begin */
 		// 首先推荐人得存在
 		if(!isOrigin){
-			User referrer = userDao.selectByTel(user.getReferrer().getTel());
+			referrer = userDao.selectByTel(user.getReferrer().getTel());
 			if(referrer == null){
 				throw new XException(0, "推荐人不存在, 注册失败", null);
 			}
 			user.setReferrer(referrer);
 		}
-		// 检查推荐人数是否已达上限
-		List<User> recommendedUsers = userDao.selectByReferrer(user.getReferrer().getUid());
-		if(recommendedUsers.size() == (isOrigin ? 8 : 2))
+		// 检查推荐人数是否已达上限, 上限: (升级次数 + 1) * 2
+		int maxRecommendedUsers = 0;
+		maxRecommendedUsers = (userDao.selectPromotionTimes(referrer.getUid()) + 1) * 2;
+		List<User> recommendedUsers = userDao.selectByReferrer(referrer.getUid());
+		if(recommendedUsers.size() == (isOrigin ? 8 : maxRecommendedUsers))
 			throw new XException(0, "该用户推荐人数已达上限, 注册失败", null);
 		/* 推荐人是否满足条件 end */
+		
+		//刚注册时, 推荐人即为上级
+		user.setSuperior(referrer);
 		
 		//用户的角色: 推荐人角色的下级角色
 		List<Role> userRoles = new ArrayList<Role>();
@@ -69,6 +75,7 @@ public class UserService {
 				if(roleMatcher.find()){
 					//推荐人的下级中文角色名称
 					String roleName = String.valueOf(Integer.parseInt(roleMatcher.group(1)) + 1).concat("级代理");
+					//检查角色是否存在, 如果角色不存在, 还需创建该角色
 					Role userRole = roleDao.selectByName(roleName);
 					if(userRole == null){
 						userRole = new Role();
@@ -95,7 +102,11 @@ public class UserService {
 			throw new XException(0, "注册失败, 请稍后再试", null);
 		
 		//注册完以后要检查上级推荐人
-		
+		/*
+		 * 角色: 上下级关系
+		 * 推荐人: 只是记录作用
+		 * 
+		 */
 	}
 	
 	

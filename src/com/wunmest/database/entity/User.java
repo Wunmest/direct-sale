@@ -23,8 +23,22 @@ public class User {
 	private String regTime;
 	private User referrer;
 	private List<Role> roles;
-
+	private User superior;
+	private String path; 
 	
+	
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	public User getSuperior() {
+		return superior;
+	}
+	public void setSuperior(User superior) {
+		this.superior = superior;
+	}
 	public List<Role> getRoles() {
 		return roles;
 	}

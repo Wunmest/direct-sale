@@ -52,7 +52,7 @@ public class UserAction {
 			userServer.setRealname(referrerName);
 			userServer.setTel(referrerTel);
 			userClient.setReferrer(userServer);
-			
+			//注册
 			userService.reg(userClient, request);
 		} catch (Exception e) {
 			e.printStackTrace();

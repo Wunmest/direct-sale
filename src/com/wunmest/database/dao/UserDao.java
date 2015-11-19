@@ -21,4 +21,6 @@ public interface UserDao {
 	
 	public int insertUserRoles(User user);
 	
+	public int selectPromotionTimes(long uid);
+	
 }
