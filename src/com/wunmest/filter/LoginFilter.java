@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * 登录�?��, 采用过滤器的形式
+ * 登录检查, 采用过滤器的形式
  * */
 public class LoginFilter extends OncePerRequestFilter {
 

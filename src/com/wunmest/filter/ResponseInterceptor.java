@@ -24,7 +24,7 @@ public class ResponseInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
 		getHeadersInfo(request);
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
-		//�?��执行方法是否�?@ResponseBody 注解, 如果被注�? 要求返回参数必须�?XResponse, 否则可以考虑用视图解析器返回
+		//判断执行方法是否被 @ResponseBody 注解, 如果被注解 要求返回参数必须为 XResponse, 否则可以考虑用视图解析器返回
 		if(handlerMethod.getMethodAnnotation(ResponseBody.class) != null){
 			if(handlerMethod.getReturnType().getParameterType() != XResponse.class){
 				response.setCharacterEncoding("utf-8");

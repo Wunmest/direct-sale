@@ -39,8 +39,8 @@ public class UserService {
 	public void reg(User user, HttpServletRequest request) throws XException{
 		Logger log = Logger.getLogger(UserService.class);
 		
-		boolean isOrigin = Long.valueOf(0) == user.getReferrer().getUid();
-		User referrer = null;
+		boolean isOrigin = Long.valueOf(0).equals(user.getReferrer().getUid());
+		User referrer = user.getReferrer();
 		
 		/* 推荐人是否满足条件 begin */
 		// 首先推荐人得存在

@@ -19,7 +19,7 @@ public class XException extends Exception {
 	public String getMsg() {
 		return msg;
 	}
-	public void setMsg(String Msg) {
+	public void setMsg(String msg) {
 		this.msg = msg;
 	}
 	
